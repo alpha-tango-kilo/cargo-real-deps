@@ -17,14 +17,6 @@ use std::{collections::BTreeSet, env, path::Path, rc::Rc};
 fn main() -> CargoResult<()> {
     let app = App::new("cargo-real-deps")
         .arg(
-            Arg::with_name("path")
-                .short("p")
-                .long("path")
-                .required(true)
-                .takes_value(true)
-                .help("path to Cargo.toml"),
-        )
-        .arg(
             Arg::with_name("all-features")
                 .long("all-features")
                 .help("activate all features"),
@@ -40,6 +32,12 @@ fn main() -> CargoResult<()> {
                 .takes_value(true)
                 .value_delimiter(",")
                 .help("activates some features"),
+        )
+        .arg(
+            Arg::with_name("path")
+                .required(true)
+                .takes_value(true)
+                .help("path to Cargo.toml"),
         );
 
     // Hacky solution to ignore unexpected arg when being run as a cargo subcommand
