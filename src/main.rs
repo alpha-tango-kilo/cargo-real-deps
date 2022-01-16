@@ -34,6 +34,12 @@ fn main() -> CargoResult<()> {
                 .help("activates some features"),
         )
         .arg(
+            Arg::with_name("count")
+                .short("c")
+                .long("count")
+                .help("prints only the total number of dependencies"),
+        )
+        .arg(
             Arg::with_name("path")
                 .required(true)
                 .takes_value(true)
@@ -85,19 +91,14 @@ fn main() -> CargoResult<()> {
     .targeted_resolve;
 
     let package_ids = resolve.sort();
-    /*
-    println!("metadata: {:?}", resolve.metadata());
-    let packige = ws.current()?;
-    println!("current package: {:?}", packige);
-    println!("current id: {:?}", packige.package_id());
-    //println!("summary: {:?}", packige.summary());
-    //println!("targets: {:#?}", packige.targets());
-    let members = ws.members().collect::<Vec<_>>();
-    println!("workspace members: {:?}", members);
-    */
 
-    for id in &package_ids {
-        println!("{} {} {:?}", id.name(), id.version(), resolve.features(*id));
+    if matches.is_present("count") {
+        eprint!("Total dependencies: ");
+        println!("{}", package_ids.len());
+    } else {
+        package_ids
+            .iter()
+            .for_each(|id| eprintln!("{} {} {:?}", id.name(), id.version(), resolve.features(*id)));
     }
 
     Ok(())
