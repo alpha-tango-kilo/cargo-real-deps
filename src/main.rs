@@ -12,10 +12,10 @@ use cargo::{
         interning::InternedString,
     },
 };
-use std::{collections::BTreeSet, path::Path, rc::Rc};
+use std::{collections::BTreeSet, env, path::Path, rc::Rc};
 
 fn main() -> CargoResult<()> {
-    let matches = App::new("cargo-real-deps")
+    let app = App::new("cargo-real-deps")
         .arg(
             Arg::with_name("path")
                 .short("p")
@@ -40,10 +40,15 @@ fn main() -> CargoResult<()> {
                 .takes_value(true)
                 .value_delimiter(",")
                 .help("activates some features"),
-        )
-        .get_matches();
+        );
 
-    let path = Path::new(matches.value_of("path").unwrap())
+    // Hacky solution to ignore unexpected arg when being run as a cargo subcommand
+    // If called as a subcommand, env::args is [executable-path, subcommand name, args, ...]
+    // The subcommand name being present messes up the parsing so we filter it out
+    let matches =
+        app.get_matches_from(env::args_os().filter(|s| !s.eq_ignore_ascii_case("real-deps")));
+
+    let path = Path::new(matches.value_of_os("path").unwrap())
         .canonicalize()
         .unwrap();
     let all_features = matches.is_present("all-features");
