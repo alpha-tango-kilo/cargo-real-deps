@@ -1,19 +1,18 @@
 # cargo-real-deps
 
-[![crates.io](https://img.shields.io/crates/v/cargo-real-deps.svg)](https://crates.io/crates/cargo-real-deps)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
 
-Cargo subcommand to check which crates are built depending on features.
+Cargo subcommand to check which crates are built when building for the host machine with the selected features
 
 The `Cargo.lock` file indicates the entire list of dependencies, but some of those might not be built depending on the platform or the set of features you have chosen.
-This tool will give you the actual list of dependencies, their version and the activated features depending on how you build it.
+This tool will give you the actual list of dependencies, their version and the activated features depending on how you build it
 
-As an example, here is the dependency list generated for a normal build of nom:
+As an example, here is the dependency list generated for a normal build of [nom](https://lib.rs/nom):
 
 ```
-$ cargo-real-deps /path/to/nom/Cargo.toml
+$ cargo real-deps nom/Cargo.toml
 cfg-if 0.1.9 {}
 semver-parser 0.7.0 {}
 semver 0.9.0 {"default"}
@@ -32,7 +31,7 @@ nom 5.0.1 {"default", "std", "lexical", "lexical-core", "alloc"}
 But if you wanted to see which dependencies are built when in "no std":
 
 ```
-$ cargo-real-deps /path/to/nom/Cargo.toml --no-default-features
+$ cargo real-deps nom/Cargo.toml --no-default-features
 memchr 2.2.1 {}
 version_check 0.1.5 {}
 nom 5.0.1 {}
@@ -51,16 +50,22 @@ cargo install cargo-real-deps
 ## Usage
 
 ```
+cargo-real-deps  
+Cargo subcommand to check which crates are built depending on features
+
 USAGE:
-    cargo-real-deps [FLAGS] [OPTIONS] --path <path>
+    cargo real-deps [FLAGS] [OPTIONS] [path]
 
 FLAGS:
-        --all-features           activate all features
+        --all-features           Activate all features
+    -c, --count                  Prints only the total number of dependencies
     -h, --help                   Prints help information
-        --no-default-features    deactivate default features
+        --no-default-features    Deactivate default features
     -V, --version                Prints version information
 
 OPTIONS:
-        --features <features>    activates some features
-    -p, --path <path>            path to Cargo.toml
+        --features <features>    Activates some features
+
+ARGS:
+    <path>    Project directory, or path to Cargo.toml
 ```
