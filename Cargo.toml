@@ -24,6 +24,10 @@ cargo = "0.59"
 thiserror = "1.0"
 
 [profile.release]
-lto = true
+lto = "thin"
 panic = "abort"
+
+[profile.turbo]
+inherits = "release"
+lto = "fat"
 codegen-units = 1
