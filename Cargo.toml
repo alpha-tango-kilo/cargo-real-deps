@@ -13,13 +13,13 @@ categories = ["development-tools", "development-tools::cargo-plugins"]
 description = "Cargo subcommand to check which crates are built depending on features"
 readme = "README.md"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 # For handling cargo's errors
 anyhow = "1.0"
 # For determining which dependencies are built
 cargo = "0.59"
+# For spinner
+indicatif = "=0.17.0-rc.1"
 # For this crate's errors
 thiserror = "1.0"
 

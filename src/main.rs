@@ -9,6 +9,7 @@ use std::ffi::OsStr;
 use std::path::PathBuf;
 use std::rc::Rc;
 use std::{env, io};
+use indicatif::{ProgressBar, ProgressStyle};
 use thiserror::Error;
 use RealDepsError::*;
 
@@ -66,6 +67,15 @@ fn main() -> Result<()> {
 
     let path = get_cargo_toml_path(matches.value_of_os("path"))?;
 
+    // SPINNER START
+    let bar_style = ProgressStyle::default_spinner()
+        .template("{wide_msg} {spinner} ({elapsed})")
+        .tick_chars("|/-\\ ");
+    let bar = ProgressBar::new_spinner()
+        .with_style(bar_style)
+        .with_message("Using cargo to determine dependencies");
+    bar.enable_steady_tick(150);
+
     let features = Rc::new(
         matches
             .values_of("features")
@@ -102,6 +112,9 @@ fn main() -> Result<()> {
     .targeted_resolve;
 
     let package_ids = resolve.sort();
+
+    // SPINNER STOP
+    bar.finish_and_clear();
 
     if matches.is_present("count") {
         eprint!("Total dependencies: ");
