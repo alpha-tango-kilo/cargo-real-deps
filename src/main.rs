@@ -12,7 +12,7 @@ use cargo::{
         interning::InternedString,
     },
 };
-use std::{collections::BTreeSet, env, path::Path, rc::Rc};
+use std::{collections::BTreeSet, env, path::PathBuf, rc::Rc};
 
 fn main() -> CargoResult<()> {
     let app = App::new("cargo-real-deps")
@@ -30,7 +30,6 @@ fn main() -> CargoResult<()> {
             Arg::with_name("features")
                 .long("features")
                 .takes_value(true)
-                .value_delimiter(",")
                 .help("activates some features"),
         )
         .arg(
@@ -41,9 +40,8 @@ fn main() -> CargoResult<()> {
         )
         .arg(
             Arg::with_name("path")
-                .required(true)
                 .takes_value(true)
-                .help("path to Cargo.toml"),
+                .help("path to (or directory containing) Cargo.toml"),
         );
 
     // Hacky solution to ignore unexpected arg when being run as a cargo subcommand
@@ -52,9 +50,18 @@ fn main() -> CargoResult<()> {
     let matches =
         app.get_matches_from(env::args_os().filter(|s| !s.eq_ignore_ascii_case("real-deps")));
 
-    let path = Path::new(matches.value_of_os("path").unwrap())
+    let mut path: PathBuf = matches
+        .value_of_os("path")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| env::current_dir().expect("can't access current directory"))
         .canonicalize()
-        .unwrap();
+        .expect("failed to canonicalize path to Cargo.toml");
+
+    if !path.ends_with("Cargo.toml") {
+        assert!(path.is_dir(), "invalid file provided");
+        path.push("Cargo.toml");
+    }
+
     let all_features = matches.is_present("all-features");
     let uses_default_features = !matches.is_present("no-default-features");
     let features = Rc::new(
