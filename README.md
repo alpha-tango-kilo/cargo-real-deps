@@ -1,5 +1,10 @@
 # cargo-real-deps
 
+> **THIS FORK HAS BEEN DEPRECATED IN FAVOUR OF [`cargo-deps-list`](https://github.com/alpha-tango-kilo/cargo-deps-list)**.
+> 
+> It actually works as desired, and doesn't take years to compile.
+> It also better suits my use case (gives a total count of dependencies, and doesn't show features enabled on each dependency)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
